@@ -17,14 +17,43 @@ GET     /assets/*file               controllers.Assets.versioned(file)
 
 # *** Actions, controllers and results ***
 
+# 2.
+GET   /ok  controllers.ChallengeController.ok
+GET   /unauthorized  controllers.ChallengeController.unauthorized
+GET   /internalServerError  controllers.ChallengeController.internalServerError
+GET   /getName  controllers.MyController.getName
 
-    # 2.
-GET /ok  controllers.ChallengeController.ok
-GET /unauthorized  controllers.ChallengeController.unauthorized
-GET /internalServerError  controllers.ChallengeController.internalServerError
-GET /getName  controllers.MyController.getName
-
-    # 3.
-GET /scalaBook  controllers.ChallengeController.scalaBook
+# 3.
+GET   /scalaBook  controllers.ChallengeController.scalaBook
 
 
+# *** Routing ***
+
+# 1.
+GET   /getRequest  controllers.ChallengeController.getRequest
+POST   /postRequest  controllers.ChallengeController.postRequest
+PUT   /putRequest  controllers.ChallengeController.putRequest
+DELETE   /deleteRequest controllers.ChallengeController.deleteRequest
+PATCH   /patchRequest controllers.ChallengeController.patchRequest
+
+# 2.
+#Path params
+#Test: http://localhost:9000/sendParameter/Test
+#Result: Hello, the parameter: Test has been received!
+GET   /sendParameter/:parameter  controllers.ChallengeController.sendParameter(parameter)
+
+#Query params
+#Test: http://localhost:9000/sendParameter?parameter=Test2
+#Result: Hello, the parameter: Test2 has been received!
+GET   /sendParameter  controllers.ChallengeController.sendParameter(parameter)
+
+# 3.
+#Test Postman: http://localhost:9000/requestWithHeader
+#Headers => Key: Login - Value: sazi2006
+#Result Postman: Request received for login: sazi2006
+GET   /requestWithHeader  controllers.ChallengeController.requestWithHeader
+
+# 4.
+#Test Postman: http://localhost:9000/requestWithCookies
+#Result Postman: Received the cookie: Cookie(org,Ceiba,None,/,None,false,true,None)
+GET   /requestWithCookies  controllers.ChallengeController.requestWithCookies
