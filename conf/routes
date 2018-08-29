@@ -15,28 +15,28 @@ GET     /assets/*file               controllers.Assets.versioned(file)
 # --------------- Scala Challenges ------------------
 
 
-# *** Actions, controllers and results ***
+# *** Actions, Controllers y Results ***
 
-# 2.
+# 2. Crear diversar acciones y mapearlas en el archivo routes, que retornen mensajes con codigos http 200, 401y 500
 GET   /ok  controllers.ChallengeController.ok
 GET   /unauthorized  controllers.ChallengeController.unauthorized
 GET   /internalServerError  controllers.ChallengeController.internalServerError
 GET   /getName  controllers.MyController.getName
 
-# 3.
+# 3. Crear un action que devuelva un archivo .pdf de su elección
 GET   /scalaBook  controllers.ChallengeController.scalaBook
 
 
 # *** Routing ***
 
-# 1.
+# 1. En el archivo routes definir rutas del tipo GET, POST, PUT, DELETE, PATCH e implementarlas en controladores
 GET   /getRequest  controllers.ChallengeController.getRequest
 POST   /postRequest  controllers.ChallengeController.postRequest
 PUT   /putRequest  controllers.ChallengeController.putRequest
 DELETE   /deleteRequest controllers.ChallengeController.deleteRequest
 PATCH   /patchRequest controllers.ChallengeController.patchRequest
 
-# 2.
+# 2. Usar query params, Path params
 #Path params
 #Test: http://localhost:9000/sendParameter/Test
 #Result: Hello, the parameter: Test has been received!
@@ -47,13 +47,27 @@ GET   /sendParameter/:parameter  controllers.ChallengeController.sendParameter(p
 #Result: Hello, the parameter: Test2 has been received!
 GET   /sendParameter  controllers.ChallengeController.sendParameter(parameter)
 
-# 3.
+# 3. Recibir e imprimir por consola headers (Puedes apoyarte de jmeter o postman)
 #Test Postman: http://localhost:9000/requestWithHeader
 #Headers => Key: Login - Value: sazi2006
 #Result Postman: Request received for login: sazi2006
 GET   /requestWithHeader  controllers.ChallengeController.requestWithHeader
 
-# 4.
+# 4. Recibir e imprimir por consola cookies (Puedes apoyarte de jmeter o postman)
 #Test Postman: http://localhost:9000/requestWithCookies
 #Result Postman: Received the cookie: Cookie(org,Ceiba,None,/,None,false,true,None)
 GET   /requestWithCookies  controllers.ChallengeController.requestWithCookies
+
+# *** Manipulando Results ***
+
+# 1. Cambiar sobre algún action, el Content-Type
+GET   /customContentType  controllers.ChallengeController.customContentType
+
+# 2. Adicionar algún header en el response
+GET   /customHeader  controllers.ChallengeController.customHeader
+
+# 3. Adicionar una cookie en el reponse
+GET   /addCookie  controllers.ChallengeController.addCookie
+
+
+

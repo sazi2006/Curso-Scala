@@ -10,10 +10,13 @@ class ChallengeController @Inject()(cc: ControllerComponents, parser: PlayBodyPa
                                    (implicit exec: ExecutionContext) extends AbstractController(cc) {
 
   // Actions, Controllers y Results
+
+  //2. Crear diversar acciones y mapearlas en el archivo routes, que retornen mensajes con codigos http 200, 401y 500
   def ok = Action { request => Ok("200 OK") }
   def unauthorized = Action { request => Unauthorized("401 UNAUTHORIZED") }
   def internalServerError = Action { request => InternalServerError("500 INTERNAL_SERVER_ERROR") }
 
+  //3. Crear un action que devuelva un archivo .pdf de su elección
   def scalaBook = Action {
     Ok.sendFile(
       new java.io.File(
@@ -22,16 +25,20 @@ class ChallengeController @Inject()(cc: ControllerComponents, parser: PlayBodyPa
   }
 
   // Routing
+
+  //1. En el archivo routes definir rutas del tipo GET, POST, PUT, DELETE, PATCH e implementarlas en controladores
   def getRequest = Action { request => Ok("Get request!") }
   def postRequest = Action { request => Ok("Post request!") }
   def putRequest = Action { request => Ok("Put request!") }
   def deleteRequest = Action { request => Ok("Delete request!") }
   def patchRequest = Action { request => Ok("Patch request!") }
 
+  //2. Usar query params, Path params
   def sendParameter(parameter: String) = Action { request =>
     Ok(s"Hello, the parameter: $parameter has been received!")
   }
 
+  //3. Recibir e imprimir por consola headers (Puedes apoyarte de jmeter o postman)
   def requestWithHeader() = Action {
     request => {
       val headers = request.headers;
@@ -40,6 +47,7 @@ class ChallengeController @Inject()(cc: ControllerComponents, parser: PlayBodyPa
     }
   }
 
+  //4. Recibir e imprimir por consola cookies (Puedes apoyarte de jmeter o postman)
   def requestWithCookies() = Action { request =>
     val someOrg = request.cookies.get("org")
     val org = someOrg match {
@@ -53,6 +61,28 @@ class ChallengeController @Inject()(cc: ControllerComponents, parser: PlayBodyPa
       .withCookies(Cookie("org", "Ceiba"))
       .bakeCookies()
   }
+
+  //Manipulando Results
+
+  //1. Cambiar sobre algún action, el Content-Type
+  def customContentType() = Action { request =>
+    Ok(<h1>Hello, this Content-Type is HTML!</h1>).as(HTML)
+  }
+
+  //2. Adicionar algún header en el response
+  def customHeader() = Action { request =>
+    Ok("Hello, these Headers were added!").withHeaders(
+      CACHE_CONTROL -> "max-age=3600",
+      ETAG -> "Header added")
+  }
+
+  //3. Adicionar una cookie en el reponse
+  def addCookie() = Action { request =>
+    Ok("Hello, the owner Cookie was added")
+      .withCookies(Cookie("owner", "Alejandro"))
+      .bakeCookies()
+  }
+
 
 
 
