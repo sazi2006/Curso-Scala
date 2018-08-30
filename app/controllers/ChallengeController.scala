@@ -2,9 +2,9 @@ package controllers
 
 import javax.inject.Inject
 import org.apache.commons.lang3.Validate
-import play.api.mvc.{AbstractController, ControllerComponents, Cookie, PlayBodyParsers}
+import play.api.mvc._
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future, TimeoutException}
 
 class ChallengeController @Inject()(cc: ControllerComponents, parser: PlayBodyParsers, parserValidation: Validate)
                                    (implicit exec: ExecutionContext) extends AbstractController(cc) {
@@ -82,6 +82,54 @@ class ChallengeController @Inject()(cc: ControllerComponents, parser: PlayBodyPa
       .withCookies(Cookie("owner", "Alejandro"))
       .bakeCookies()
   }
+
+  //ActionsComposition
+
+  //1. Crear un ActionsComposition que valide la autenticación de la siguiente forma,
+  //si en el request llega un header con el nombre tkn continuará al action
+  // de lo contrario retornará un http 403
+
+  def authenticationValidate = Action.async { request =>
+    Future {
+      request.headers.get("tkn").map(x => Ok(s"The token is $x" )).getOrElse(Forbidden("The token is missing"))
+
+    }
+  }
+
+  //ErrorHandling
+
+  //1.  Crear un error handler que implemente de la clase HttpErrorHandler
+
+  //Se creó la clase ErrorHandler en el directorio raíz (app)
+
+  //2. Valide su funcionamiento para errores de servidor generando algún error desde
+  // el controlador y evidenciando que retorne lo descrito en el handler
+
+  def handle = Action {
+    throw new IllegalStateException("Exception thrown")
+    Ok("This wont actually execute")
+  }
+
+
+  //Http Async
+
+  //5. Crear una acción con devolución de futuros
+
+  def asyncRequest = Action.async {
+
+    someCalculation().map(calculationResult => {
+      Ok(s"The calculation result is ${calculationResult}")
+    }).recover {
+      case e: TimeoutException =>
+        InternalServerError(s"Calculation timed out! exception thrown is: ${e.getMessage}")
+    }
+  }
+
+  // privates
+  private def someCalculation(): Future[Int] = {
+    Future.successful(3)
+  }
+
 
 
 

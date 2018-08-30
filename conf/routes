@@ -69,5 +69,26 @@ GET   /customHeader  controllers.ChallengeController.customHeader
 # 3. Adicionar una cookie en el reponse
 GET   /addCookie  controllers.ChallengeController.addCookie
 
+# *** ActionsComposition ***
+
+# 1. Crear un ActionsComposition que valide la autenticación de la siguiente forma,
+# si en el request llega un header con el nombre tkn continuará al action
+# de lo contrario retornará un http 403
+
+GET   /authenticationValidate  controllers.ChallengeController.authenticationValidate
+
+# *** ErrorHandling ***
+
+# 2. Valide su funcionamiento para errores de servidor generando algún error desde
+# el controlador y evidenciando que retorne lo descrito en el handler
+
+GET   /handle  controllers.ChallengeController.handle
+
+# *** Http Async ***
+
+# 5. Crear una acción con devolución de futuros
+
+GET   /asyncRequest  controllers.ChallengeController.asyncRequest
+
 
 
