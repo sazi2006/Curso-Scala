@@ -22,4 +22,8 @@ class HomeController @Inject()(cc: ControllerComponents) (implicit assetsFinder:
     Ok(views.html.index("Your new application is ready."))
   }
 
+  def indexForm = Action {
+    Ok(views.html.indexForm())
+  }
+
 }

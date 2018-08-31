@@ -4,6 +4,14 @@
 
 # An example controller showing a sample home page
 GET     /                           controllers.HomeController.index
+
+# *** Cargar y retornar archivos ***
+
+# 1. Realizar una prueba de concepto cargando un archivo desde un index.html,
+#dicho archivo se debera almacenar en una carpeta del disco c
+GET     /indexForm                  controllers.HomeController.indexForm
+
+
 # An example controller showing how to use dependency injection
 GET     /count                      controllers.CountController.count
 # An example controller showing how to write asynchronous code
@@ -87,8 +95,47 @@ GET   /handle  controllers.ChallengeController.handle
 # *** Http Async ***
 
 # 5. Crear una acción con devolución de futuros
-
 GET   /asyncRequest  controllers.ChallengeController.asyncRequest
+
+# *** PlayJson ***
+
+# 1. Usar Jsvalue
+GET   /jsValue  controllers.ChallengeController.jsValue
+
+# 2. Usar writes
+GET   /jsWrite  controllers.ChallengeController.jsWrite
+
+GET   /jsAutomaticWrite  controllers.ChallengeController.jsAutomaticWrite
+
+# 3. Aprender a buscar valores en Json
+GET   /jsSearch  controllers.ChallengeController.jsSearch
+
+# 4. Usar validate
+GET   /jsValidate  controllers.ChallengeController.jsValidate
+
+# *** JsonHttp ***
+
+# 2. Ser capaz de devolver una lista de personas (con y sin bloqueo "futures")
+GET   /listSyncPersons  controllers.ChallengeController.listSyncPersons
+
+GET   /listAsyncPersons  controllers.ChallengeController.listAsyncPersons
+
+# 3. Ser capaz de recibir una persona para crearla (con y sin bloqueo "futures")
++ nocsrf
+POST   /addSync  controllers.ChallengeController.addSync
+
++ nocsrf
+POST   /addASync  controllers.ChallengeController.addASync
+
+# *** Cargar y retornar archivos ***
+
+# 1. Realizar una prueba de concepto cargando un archivo desde un index.html,
+#dicho archivo se debera almacenar en una carpeta del disco c
++ nocsrf
+POST   /fileUpload  controllers.ChallengeController.fileUpload
+
+
+
 
 
 

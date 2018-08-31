@@ -1,8 +1,15 @@
 package controllers
 
+import java.nio.file.Paths
+
 import javax.inject.Inject
+import models.{Person, PersonList, User}
+import models.PersonList._
 import org.apache.commons.lang3.Validate
+import play.api.libs.json._
 import play.api.mvc._
+import play.api.libs.functional.syntax._
+import play.api.libs.json.Reads._
 
 import scala.concurrent.{ExecutionContext, Future, TimeoutException}
 
@@ -117,19 +124,165 @@ class ChallengeController @Inject()(cc: ControllerComponents, parser: PlayBodyPa
 
   def asyncRequest = Action.async {
 
-    someCalculation().map(calculationResult => {
-      Ok(s"The calculation result is ${calculationResult}")
+    someCalculation().map(result  => {
+      Ok(s"The answer is $result")
     }).recover {
       case e: TimeoutException =>
         InternalServerError(s"Calculation timed out! exception thrown is: ${e.getMessage}")
     }
   }
 
-  // privates
-  private def someCalculation(): Future[Int] = {
-    Future.successful(3)
+  def someCalculation(): Future[Int] = {
+    Future.successful(42)
   }
 
+  //PlayJson
+
+  //1. Usar Jsvalue
+
+  def jsValue = Action {
+
+    val json: JsValue = Json.obj(
+      "name" -> "Alejandro",
+      "surname" -> "Zapata",
+      "cc" -> "98703347")
+
+    val fieldName: Option[String] = json("name").asOpt[String]
+    val fieldSurname: Option[String] = json("surname").asOpt[String]
+    val fieldCc: Option[String] = json("cc").asOpt[String]
+    Ok(s"The user ${fieldName.get} ${fieldSurname.get} has the identification number ${fieldCc.get}")
+  }
+
+  //2. Usar writes
+
+  def jsWrite = Action {
+
+    implicit val userWrite: Writes[User] = (
+      (JsPath \ "name").write[String] and
+        (JsPath \ "surname").write[String] and
+        (JsPath \ "cc").write[String]
+      ) (unlift(User.unapply))
+
+    val user = User("Alejandro", "Zapata", "98703347")
+    Ok(Json.toJson(user))
+  }
+
+  def jsAutomaticWrite = Action {
+
+    implicit val userWrite: Writes[User] = Json.writes[User]
+    val user = User("Alejandro", "Zapata", "98703347")
+
+    Ok(Json.toJson(user))
+  }
+
+  //3. Aprender a buscar valores en Json
+
+  def jsSearch = Action {
+
+    val json: JsValue = Json.obj(
+      "name" -> "Alejandro",
+      "surname" -> "Zapata",
+      "info" -> Json.obj(
+        "login" -> "alejandro.zapata",
+        "cc" -> "98703347"
+      )
+    )
+
+    val login = (json \ "info" \ "login").asOpt[String]
+    val cc = (json \ "info" \ "cc").asOpt[String]
+
+    Ok(s"Your login is: ${login.get} and your identification number is: ${cc.get}")
+  }
+
+  //4. Usar validate
+
+  def jsValidate = Action {
+
+    implicit val userReads: Reads[User] = (
+      (JsPath \ "name").read[String] and
+        (JsPath \ "surname").read[String] and
+        (JsPath \ "cc").read[String](minLength[String](6))
+      ) (User.apply _)
+
+    val json: JsValue = Json.obj(
+      "name" -> "Alejandro",
+      "surname" -> "Zapata",
+      "cc" -> "98703347")
+
+    val jsonResult = json.validate[User]
+
+    jsonResult match {
+      case JsSuccess(user: User, path: JsPath) => Ok(s"The user is: ${user.name} ${user.surname} with identification number: ${user.cc}")
+      case e: JsError => InternalServerError("Errors: " + JsError.toJson(e).toString())
+    }
+  }
+
+  //JsonHttp
+
+  //1. Definir un objeto de dominio persona
+  //Se creó la clase Person en models
+
+  //2. Ser capaz de devolver una lista de personas (con y sin bloqueo "futures")
+
+  def listSyncPersons = Action {
+    Ok(Json.toJson(PersonList.list))  }
+
+  def listAsyncPersons = Action.async {
+    Future.successful(
+      Ok(Json.toJson(PersonList.list))
+    )
+  }
+
+  //3. Ser capaz de recibir una persona para crearla (con y sin bloqueo "futures")
+
+  def addSync = Action(parser.json) { request => {
+      val person: JsResult[Person] = request.body.validate[Person]
+      person match {
+        case JsSuccess(person: Person, path: JsPath) => {
+          PersonList.save(person)
+          Ok(Json.toJson(PersonList.list))
+        }
+        case e: JsError => BadRequest(JsError.toJson(e).toString())
+      }
+    }
+  }
+
+  def addASync = Action.async(parser.json) { request => {
+      val person: JsResult[Person] = request.body.validate[Person]
+      Future {
+        person match {
+          case JsSuccess(person: Person, path: JsPath) => {
+            PersonList.save(person)
+            Ok(Json.toJson(PersonList.list))
+          }
+          case e: JsError => BadRequest(JsError.toJson(e).toString())
+        }
+      }
+    }
+  }
+
+  //Cargar y retornar archivos
+
+  //1. Realizar una prueba de concepto cargando un archivo desde un index.html,
+  // dicho archivo se debera almacenar en una carpeta del disco c
+
+  def fileUpload = Action(parse.multipartFormData) { request =>
+    request.body.file("file").map { file =>
+
+      // only get the last part of the filename
+      // otherwise someone can send a path like ../../home/foo/bar.txt to write to other files on the system
+      val filename = Paths.get(file.filename).getFileName
+
+      file.ref.moveTo(Paths.get(s"D:/Proyectos/Scala/play-scala-starter-example/public/upload/$filename"), replace = true)
+      Ok("File uploaded")
+    }.getOrElse {
+      Redirect(routes.HomeController.indexForm).flashing(
+        "error" -> "Missing file")
+    }
+  }
+
+  //2. Habilitar la limpieza de archivos temporales
+  //Se habilitó el reaper en el archivo application.conf
 
 
 
