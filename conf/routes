@@ -135,6 +135,17 @@ POST   /addASync  controllers.ChallengeController.addASync
 POST   /fileUpload  controllers.ChallengeController.fileUpload
 
 
+# *** Play Slick ***
+
+GET /persons                                     controllers.PersonController.list
++ nocsrf
+POST /persons                                    controllers.PersonController.create
++ nocsrf
+PUT /persons                                     controllers.PersonController.update
++ nocsrf
+DELETE /persons/:id                              controllers.PersonController.delete(id: Long)
+
+
 
 
 

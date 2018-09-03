@@ -1,23 +1,9 @@
 package models
 
-import play.api.libs.json.{Json, Reads, Writes}
+import play.api.libs.json.{Json, OFormat}
 
-case class Person (name: String, surname: String)
+case class Person(id: Option[Long], name: String, age: Int)
 
-object PersonList {
-
-  implicit val personWrites: Writes[Person] = Json.writes[Person]
-  implicit val personReads: Reads[Person] = Json.reads[Person]
-
-  var list: List[Person]  =  List(
-    Person("Alejandro", "Zapata"),
-    Person("Lady", "Hincapié"),
-    Person("Santiago", "Zapata"),
-    Person("Juan José", "Zapata"),
-    Person("Marina", "Ibarra"),
-  )
-
-  def save(person: Person) = {
-    list = list :+ person
-  }
+object Person {
+  implicit val personFormat: OFormat[Person] = Json.format[Person]
 }

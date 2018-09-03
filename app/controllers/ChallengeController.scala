@@ -3,8 +3,8 @@ package controllers
 import java.nio.file.Paths
 
 import javax.inject.Inject
-import models.{Person, PersonList, User}
-import models.PersonList._
+import models.{PersonJson, PersonJsonList, User}
+import models.PersonJsonList._
 import org.apache.commons.lang3.Validate
 import play.api.libs.json._
 import play.api.mvc._
@@ -225,22 +225,22 @@ class ChallengeController @Inject()(cc: ControllerComponents, parser: PlayBodyPa
   //2. Ser capaz de devolver una lista de personas (con y sin bloqueo "futures")
 
   def listSyncPersons = Action {
-    Ok(Json.toJson(PersonList.list))  }
+    Ok(Json.toJson(PersonJsonList.list))  }
 
   def listAsyncPersons = Action.async {
     Future.successful(
-      Ok(Json.toJson(PersonList.list))
+      Ok(Json.toJson(PersonJsonList.list))
     )
   }
 
   //3. Ser capaz de recibir una persona para crearla (con y sin bloqueo "futures")
 
   def addSync = Action(parser.json) { request => {
-      val person: JsResult[Person] = request.body.validate[Person]
+      val person: JsResult[PersonJson] = request.body.validate[PersonJson]
       person match {
-        case JsSuccess(person: Person, path: JsPath) => {
-          PersonList.save(person)
-          Ok(Json.toJson(PersonList.list))
+        case JsSuccess(person: PersonJson, path: JsPath) => {
+          PersonJsonList.save(person)
+          Ok(Json.toJson(PersonJsonList.list))
         }
         case e: JsError => BadRequest(JsError.toJson(e).toString())
       }
@@ -248,12 +248,12 @@ class ChallengeController @Inject()(cc: ControllerComponents, parser: PlayBodyPa
   }
 
   def addASync = Action.async(parser.json) { request => {
-      val person: JsResult[Person] = request.body.validate[Person]
+      val person: JsResult[PersonJson] = request.body.validate[PersonJson]
       Future {
         person match {
-          case JsSuccess(person: Person, path: JsPath) => {
-            PersonList.save(person)
-            Ok(Json.toJson(PersonList.list))
+          case JsSuccess(person: PersonJson, path: JsPath) => {
+            PersonJsonList.save(person)
+            Ok(Json.toJson(PersonJsonList.list))
           }
           case e: JsError => BadRequest(JsError.toJson(e).toString())
         }

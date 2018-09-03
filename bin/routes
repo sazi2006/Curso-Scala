@@ -4,6 +4,14 @@
 
 # An example controller showing a sample home page
 GET     /                           controllers.HomeController.index
+
+# *** Cargar y retornar archivos ***
+
+# 1. Realizar una prueba de concepto cargando un archivo desde un index.html,
+#dicho archivo se debera almacenar en una carpeta del disco c
+GET     /indexForm                  controllers.HomeController.indexForm
+
+
 # An example controller showing how to use dependency injection
 GET     /count                      controllers.CountController.count
 # An example controller showing how to write asynchronous code
@@ -11,3 +19,123 @@ GET     /message                    controllers.AsyncController.message
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.versioned(file)
+
+# --------------- Scala Challenges ------------------
+
+
+# *** Actions, Controllers y Results ***
+
+# 2. Crear diversar acciones y mapearlas en el archivo routes, que retornen mensajes con codigos http 200, 401y 500
+GET   /ok  controllers.ChallengeController.ok
+GET   /unauthorized  controllers.ChallengeController.unauthorized
+GET   /internalServerError  controllers.ChallengeController.internalServerError
+GET   /getName  controllers.MyController.getName
+
+# 3. Crear un action que devuelva un archivo .pdf de su elección
+GET   /scalaBook  controllers.ChallengeController.scalaBook
+
+
+# *** Routing ***
+
+# 1. En el archivo routes definir rutas del tipo GET, POST, PUT, DELETE, PATCH e implementarlas en controladores
+GET   /getRequest  controllers.ChallengeController.getRequest
+POST   /postRequest  controllers.ChallengeController.postRequest
+PUT   /putRequest  controllers.ChallengeController.putRequest
+DELETE   /deleteRequest controllers.ChallengeController.deleteRequest
+PATCH   /patchRequest controllers.ChallengeController.patchRequest
+
+# 2. Usar query params, Path params
+#Path params
+#Test: http://localhost:9000/sendParameter/Test
+#Result: Hello, the parameter: Test has been received!
+GET   /sendParameter/:parameter  controllers.ChallengeController.sendParameter(parameter)
+
+#Query params
+#Test: http://localhost:9000/sendParameter?parameter=Test2
+#Result: Hello, the parameter: Test2 has been received!
+GET   /sendParameter  controllers.ChallengeController.sendParameter(parameter)
+
+# 3. Recibir e imprimir por consola headers (Puedes apoyarte de jmeter o postman)
+#Test Postman: http://localhost:9000/requestWithHeader
+#Headers => Key: Login - Value: sazi2006
+#Result Postman: Request received for login: sazi2006
+GET   /requestWithHeader  controllers.ChallengeController.requestWithHeader
+
+# 4. Recibir e imprimir por consola cookies (Puedes apoyarte de jmeter o postman)
+#Test Postman: http://localhost:9000/requestWithCookies
+#Result Postman: Received the cookie: Cookie(org,Ceiba,None,/,None,false,true,None)
+GET   /requestWithCookies  controllers.ChallengeController.requestWithCookies
+
+# *** Manipulando Results ***
+
+# 1. Cambiar sobre algún action, el Content-Type
+GET   /customContentType  controllers.ChallengeController.customContentType
+
+# 2. Adicionar algún header en el response
+GET   /customHeader  controllers.ChallengeController.customHeader
+
+# 3. Adicionar una cookie en el reponse
+GET   /addCookie  controllers.ChallengeController.addCookie
+
+# *** ActionsComposition ***
+
+# 1. Crear un ActionsComposition que valide la autenticación de la siguiente forma,
+# si en el request llega un header con el nombre tkn continuará al action
+# de lo contrario retornará un http 403
+
+GET   /authenticationValidate  controllers.ChallengeController.authenticationValidate
+
+# *** ErrorHandling ***
+
+# 2. Valide su funcionamiento para errores de servidor generando algún error desde
+# el controlador y evidenciando que retorne lo descrito en el handler
+
+GET   /handle  controllers.ChallengeController.handle
+
+# *** Http Async ***
+
+# 5. Crear una acción con devolución de futuros
+GET   /asyncRequest  controllers.ChallengeController.asyncRequest
+
+# *** PlayJson ***
+
+# 1. Usar Jsvalue
+GET   /jsValue  controllers.ChallengeController.jsValue
+
+# 2. Usar writes
+GET   /jsWrite  controllers.ChallengeController.jsWrite
+
+GET   /jsAutomaticWrite  controllers.ChallengeController.jsAutomaticWrite
+
+# 3. Aprender a buscar valores en Json
+GET   /jsSearch  controllers.ChallengeController.jsSearch
+
+# 4. Usar validate
+GET   /jsValidate  controllers.ChallengeController.jsValidate
+
+# *** JsonHttp ***
+
+# 2. Ser capaz de devolver una lista de personas (con y sin bloqueo "futures")
+GET   /listSyncPersons  controllers.ChallengeController.listSyncPersons
+
+GET   /listAsyncPersons  controllers.ChallengeController.listAsyncPersons
+
+# 3. Ser capaz de recibir una persona para crearla (con y sin bloqueo "futures")
++ nocsrf
+POST   /addSync  controllers.ChallengeController.addSync
+
++ nocsrf
+POST   /addASync  controllers.ChallengeController.addASync
+
+# *** Cargar y retornar archivos ***
+
+# 1. Realizar una prueba de concepto cargando un archivo desde un index.html,
+#dicho archivo se debera almacenar en una carpeta del disco c
++ nocsrf
+POST   /fileUpload  controllers.ChallengeController.fileUpload
+
+
+
+
+
+
