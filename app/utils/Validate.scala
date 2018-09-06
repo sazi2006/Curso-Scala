@@ -12,10 +12,11 @@ import scala.concurrent.ExecutionContext
 class Validate @Inject()(parser: PlayBodyParsers)
                         (implicit exec: ExecutionContext) {
 
-  implicit val personWrites: Writes[PersonJson] = Json.writes[PersonJson] // is this necessary ?
+  implicit val personJsonWrites: Writes[PersonJson] = Json.writes[PersonJson]
 
-  implicit val personReads: Reads[PersonJson] = Json.reads[PersonJson]
-  implicit val humanReads: Reads[Person] = (
+  implicit val personJsonReads: Reads[PersonJson] = Json.reads[PersonJson]
+
+  implicit val personReads: Reads[Person] = (
     (JsPath \ "id").readNullable[Long] and
       (JsPath \ "name").read[String] and
       (JsPath \ "age").read[Int]

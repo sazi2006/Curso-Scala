@@ -137,15 +137,24 @@ POST   /fileUpload  controllers.ChallengeController.fileUpload
 
 # *** Play Slick ***
 
-GET /persons                                     controllers.PersonController.list
+GET /persons            controllers.PersonController.list
 + nocsrf
-POST /persons                                    controllers.PersonController.create
+POST /persons           controllers.PersonController.create
 + nocsrf
-PUT /persons                                     controllers.PersonController.update
+PUT /persons            controllers.PersonController.update
 + nocsrf
-DELETE /persons/:id                              controllers.PersonController.delete(id: Long)
+DELETE /persons/:id         controllers.PersonController.delete(id: Long)
 
 
+# *** Play cache ***
+GET /listCached         controllers.PersonController.listCached
+
+GET /listHttpCached         controllers.PersonController.listHttpCached
+
+
+# *** Play Ws ***
+
+GET /wsAction           controllers.ChallengeController.wsAction
 
 
 

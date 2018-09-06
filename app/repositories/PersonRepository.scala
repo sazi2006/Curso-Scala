@@ -6,11 +6,18 @@ import play.api.db.slick.DatabaseConfigProvider
 import slick.jdbc.JdbcProfile
 import slick.lifted.TableQuery
 import tables.Persons
-
 import scala.concurrent.{ExecutionContext, Future}
 
+trait PersonRepository {
+  def create(person: Person): Future[Int]
+  def list(): Future[Seq[Person]]
+  def del(id: Long): Future[Int]
+  def update(person: Person): Future[Int]
+}
+
 @Singleton
-class PersonRepository @Inject()(dbConfigProvider: DatabaseConfigProvider)(implicit ec: ExecutionContext) {
+class PersonRepositoryImp @Inject()(dbConfigProvider: DatabaseConfigProvider)
+                                  (implicit ec: ExecutionContext) extends PersonRepository {
 
   private val dbConfig = dbConfigProvider.get[JdbcProfile]
   private val persons = TableQuery[Persons]
@@ -32,7 +39,6 @@ class PersonRepository @Inject()(dbConfigProvider: DatabaseConfigProvider)(impli
   }
 
   def update(person: Person): Future[Int] = {
-
     val query = for { p <- persons
                       if p.id === person.id } yield p
     db.run(query.update(person))

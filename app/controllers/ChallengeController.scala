@@ -6,14 +6,17 @@ import javax.inject.Inject
 import models.{PersonJson, PersonJsonList, User}
 import models.PersonJsonList._
 import org.apache.commons.lang3.Validate
+import play.api.cache._
 import play.api.libs.json._
 import play.api.mvc._
 import play.api.libs.functional.syntax._
 import play.api.libs.json.Reads._
+import play.api.libs.ws.WSClient
 
 import scala.concurrent.{ExecutionContext, Future, TimeoutException}
 
-class ChallengeController @Inject()(cc: ControllerComponents, parser: PlayBodyParsers, parserValidation: Validate)
+class ChallengeController @Inject()(cc: ControllerComponents, parser: PlayBodyParsers, cache: AsyncCacheApi,
+                                    parserValidation: Validate, ws: WSClient)
                                    (implicit exec: ExecutionContext) extends AbstractController(cc) {
 
   // Actions, Controllers y Results
@@ -283,6 +286,18 @@ class ChallengeController @Inject()(cc: ControllerComponents, parser: PlayBodyPa
 
   //2. Habilitar la limpieza de archivos temporales
   //Se habilitó el reaper en el archivo application.conf
+
+  // play ws
+  def wsAction = Action.async {
+
+    val url = "https://randomuser.me/api/"
+    ws.url(url).get().map {
+      response => {
+        Ok(response.json)
+      }
+    }
+  }
+
 
 
 
